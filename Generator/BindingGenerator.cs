@@ -35,6 +35,35 @@ namespace ImGuiBeefGenerator
 			Bindings.AddRange(methods);
             Bindings.AddRange(ImGuiImplStruct.From(ReadBindingData("impl_definitions.json")));
         }
+        private enum BackendType
+        {
+            GLFW,
+            OpenGL2,
+            OpenGL3,
+            SDL2,
+            DirectX11,
+            Win32
+        }
+
+        private static string ExtraUsing(BackendType Backend)
+        {
+            switch (Backend)
+            {
+                case BackendType.DirectX11:
+                    return
+$@"using DirectX.D3D11;
+using DirectX.Windows;
+using static ImGui.ImGui;";
+
+                case BackendType.Win32:
+                    return
+$@"using DirectX.Windows;";
+
+                default: break;
+            }
+
+            return "";
+        }
 
         public Dictionary<string, string> Generate(bool includeGenerationInfo = false)
         {
@@ -200,12 +229,14 @@ namespace ImGui
 			files.Add("src/ImGui.bf", imguiFile);
 
 
-			files["ImGuiImplGlfw/src/ImGuiImplGlfw.bf"] = GenerateImplFile("ImGuiImplGlfw", Bindings);
-			files["ImGuiImplOpenGL2/src/ImGuiImplOpenGL2.bf"] = GenerateImplFile("ImGuiImplOpenGL2", Bindings);
-			files["ImGuiImplOpenGL3/src/ImGuiImplOpenGL3.bf"] = GenerateImplFile("ImGuiImplOpenGL3", Bindings);
-			files["ImGuiImplSDL/src/ImGuiImplSDL.bf"] = GenerateImplFile("ImGuiImplSDL2", Bindings);
+			files["ImGuiImplGlfw/src/ImGuiImplGlfw.bf"] = GenerateImplFile("ImGuiImplGlfw", Bindings, BackendType.GLFW);
+			files["ImGuiImplOpenGL2/src/ImGuiImplOpenGL2.bf"] = GenerateImplFile("ImGuiImplOpenGL2", Bindings, BackendType.OpenGL2);
+			files["ImGuiImplOpenGL3/src/ImGuiImplOpenGL3.bf"] = GenerateImplFile("ImGuiImplOpenGL3", Bindings, BackendType.OpenGL3);
+			files["ImGuiImplSDL/src/ImGuiImplSDL.bf"] = GenerateImplFile("ImGuiImplSDL2", Bindings, BackendType.SDL2);
+            files["ImGuiImplDX11/src/ImGuiImplDX11.bf"] = GenerateImplFile("ImGuiImplDX11", Bindings, BackendType.DirectX11);
+            files["ImGuiImplDX11/src/ImGuiImplWin32.bf"] = GenerateImplFile("ImGuiImplWin32", Bindings, BackendType.Win32);
 
-			return files;
+            return files;
         }
 
         private dynamic ReadBindingData(string file)
@@ -214,10 +245,11 @@ namespace ImGui
             return JsonSerializer.Deserialize<dynamic>(stream);
         }
 
-		private static string GenerateImplFile(string implName, List<IBinding> bindings)
+		private static string GenerateImplFile(string implName, List<IBinding> bindings, BackendType Backend)
         {
 			var implFile =
 $@"using System;
+{ExtraUsing(Backend)}
 
 namespace ImGui
 {{";

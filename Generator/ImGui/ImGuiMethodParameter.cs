@@ -106,7 +106,11 @@ namespace ImGuiBeefGenerator.ImGui
                 {
                     var argStrSplit = argStr.Split(' ');
                     var type = argStrSplit[0];
-                    var name = argStrSplit[1];
+                    var name = "";
+                    if (argStrSplit.Length > 1)
+                    {
+                        name = argStrSplit[1];
+                    }
                     paramList.Add(new ImGuiMethodParameter(name, type));
                 }
             }

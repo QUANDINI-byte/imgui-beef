@@ -1,0 +1,8 @@
+[Package]
+Name = "ImGuiImplDX11"
+Version = "1.88.0"
+Description = "dx11 Implementation for ImGui"
+
+[Dependencies]
+ImGui = { Path = ".." }
+DirectX = "*"

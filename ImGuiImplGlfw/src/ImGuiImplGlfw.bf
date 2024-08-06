@@ -1,5 +1,6 @@
 using System;
 
+
 namespace ImGui
 {
     public static class ImGuiImplGlfw
@@ -66,6 +67,10 @@ namespace ImGui
         [LinkName("ImGui_ImplGlfw_Shutdown")]
         private static extern void ShutdownImpl();
         public static void Shutdown() => ShutdownImpl();
+        
+        [LinkName("ImGui_ImplGlfw_Sleep")]
+        private static extern void SleepImpl(int32 milliseconds);
+        public static void Sleep(int32 milliseconds) => SleepImpl(milliseconds);
         
         [LinkName("ImGui_ImplGlfw_WindowFocusCallback")]
         private static extern void WindowFocusCallbackImpl(GLFWwindow* window, int32 focused);

@@ -1,5 +1,6 @@
 using System;
 
+
 namespace ImGui
 {
     public static class ImGuiImplSDL2
@@ -20,6 +21,10 @@ namespace ImGui
         private static extern bool InitForOpenGLImpl(SDL_Window* window, void* sdl_gl_context);
         public static bool InitForOpenGL(SDL_Window* window, void* sdl_gl_context) => InitForOpenGLImpl(window, sdl_gl_context);
         
+        [LinkName("ImGui_ImplSDL2_InitForOther")]
+        private static extern bool InitForOtherImpl(SDL_Window* window);
+        public static bool InitForOther(SDL_Window* window) => InitForOtherImpl(window);
+        
         [LinkName("ImGui_ImplSDL2_InitForSDLRenderer")]
         private static extern bool InitForSDLRendererImpl(SDL_Window* window, SDL_Renderer* renderer);
         public static bool InitForSDLRenderer(SDL_Window* window, SDL_Renderer* renderer) => InitForSDLRendererImpl(window, renderer);
@@ -35,6 +40,10 @@ namespace ImGui
         [LinkName("ImGui_ImplSDL2_ProcessEvent")]
         private static extern bool ProcessEventImpl(SDL_Event* event);
         public static bool ProcessEvent(SDL_Event* event) => ProcessEventImpl(event);
+        
+        [LinkName("ImGui_ImplSDL2_SetGamepadMode")]
+        private static extern void SetGamepadModeImpl(<plSDL2<GamepadMode>> mode, struct <SDL_GameController**> manual_gamepads_array, int32 manual_gamepads_count);
+        public static void SetGamepadMode(<plSDL2<GamepadMode>> mode, struct <SDL_GameController**> manual_gamepads_array = null, int32 manual_gamepads_count = -1) => SetGamepadModeImpl(mode, manual_gamepads_array, manual_gamepads_count);
         
         [LinkName("ImGui_ImplSDL2_Shutdown")]
         private static extern void ShutdownImpl();

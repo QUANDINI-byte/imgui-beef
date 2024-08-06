@@ -71,6 +71,27 @@ public static class {Name}
     private typealias SDL_Renderer = SDL2.SDL.Renderer;
 ";
             }
+            else if (Name == "ImGuiImplWin32")
+            {
+                serialized +=
+$@"
+    /* this is the callback function for input from a win32 window.
+    here is an example of how to use it:
+    public static LRESULT MessageHandler(HWND hWnd, uint32 uMsg, WPARAM wParam, LPARAM lParam)
+    {{
+	    LRESULT ImGuiR = ImGui.ImGuiImplWin32.WndProcHandler(hWnd, uMsg, wParam, lParam);
+	    if (ImGuiR != 0)
+	    {{
+		    return ImGuiR;
+	    }}
+	
+	    ...
+    }} */
+    [CallingConvention(.Stdcall), LinkName(""ImGui_ImplWin32_WndProcHandler"")]
+    public static extern LRESULT WndProcHandlerImp(HWND hWnd, uint32 uMsg, WPARAM wParam, LPARAM lParam);
+    public static LRESULT WndProcHandler(HWND hWnd, uint32 uMsg, WPARAM wParam, LPARAM lParam) => WndProcHandlerImp(hWnd, uMsg, wParam, lParam);
+";
+            }
 
             foreach (var method in Methods)
                 serialized += method.Serialize().Replace("\n", "\n    ");
